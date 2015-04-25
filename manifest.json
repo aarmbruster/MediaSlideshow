@@ -5,10 +5,13 @@
   "description": "",
   "version": "0.0.3",
   "minimum_chrome_version": "38",
+  "sandbox":true,
   "kiosk_enabled":true,
   "kiosk_only":false,
 
   "permissions":[
+    "diagnostics",
+    {"mediaGalleries": ["read", "write", "scan", "allAutoDetected"]},
       "power"
   ],
 
