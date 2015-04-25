@@ -11,7 +11,7 @@
 
   "permissions":[
     "diagnostics",
-    {"mediaGalleries": ["read", "write", "scan", "allAutoDetected"]},
+    {"mediaGalleries": ["read", "scan", "none"]},
       "power"
   ],
 
