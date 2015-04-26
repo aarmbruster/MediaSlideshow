@@ -10,13 +10,13 @@ h1 {
 }
 
 #content {
-	height: 75%;
-	width: 74%;
+	height: 100%;
+	width: 100%;
 	overflow-y: scroll;
-	border: 1px solid #aaa;
-	border-radius: 5px;
+	border: 0px solid #aaa;
+	border-radius: 0px;
 	display: inline-block;
-	background-color: #777;
+	background-color: #888;
 }
 
 #list {

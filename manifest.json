@@ -7,11 +7,9 @@
   "minimum_chrome_version": "38",
   "sandbox":true,
   "kiosk_enabled":true,
-  "kiosk_only":false,
 
   "permissions":[
-    "diagnostics",
-    {"mediaGalleries": ["read", "scan", "none"]},
+    {"mediaGalleries": ["read", "scan"]},
       "power"
   ],
 
@@ -23,6 +21,18 @@
   "app": {
     "background": {
       "scripts": ["background.js"]
+    }
+  },
+  
+  "commands": {
+    "my-command": {
+      "suggested_key": {
+        "default": "Ctrl+Shift+U",
+        "mac": "Ctrl+Shift+U",
+        "chromeos": "Ctrl+Shift+U",
+        "windows": "Ctrl+Shift+U"
+      },
+      "description": "Toggle feature foo"
     }
   }
 }
