@@ -34,8 +34,8 @@ chrome.app.runtime.onLaunched.addListener(function(launchData) {
 // app was launched normally or as a result of being restarted
 
 chrome.app.runtime.onRestarted.addListener(function() {
-    chrome.app.window.create('page.html', 
-    	{innerBounds: {width:900, height:600, minWidth:900, maxWidth: 900, minHeight:600, maxHeight: 600}, id:"MGExp"}, 
+    chrome.app.window.create('index.html', 
+    	{innerBounds: {width:1920, height:1080, minWidth:1280, maxWidth: 1920, minHeight:720, maxHeight: 1080}, id:"MGExp"}, 
     	function(app_win) {
     		app_win.contentWindow.__MGA__bRestart = true;
     	}

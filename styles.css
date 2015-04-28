@@ -1,7 +1,16 @@
 body {
-   background: #555;
-   color: #eee;
+   background: #000000;
+   color: #000;
+   border: 0px;
+   margin: 0px;
+   padding: 0px;
    font-family: "Open Sans", Arial, sans-serif;
+   align-self: center;
+   -webkit-align-self: center;
+   align-items: center;
+   align-content:center;
+   -webkit-align-items: center;
+   display:flex;
 }
 
 h1 {
@@ -12,28 +21,14 @@ h1 {
 #content {
 	height: 100%;
 	width: 100%;
-	overflow-y: scroll;
-	border: 0px solid #aaa;
+	align-self: center;
+	align-items: center;
+  align-content: center;
+  -webkit-align-items: center;
+  -webkit-align-self: center;
+	border: 0px solid #000000;
 	border-radius: 0px;
-	display: inline-block;
-	background-color: #888;
-}
-
-#list {
-	height: 75%;
-	width: 25%;
-	border: 1px solid #aaa;
-	border-radius: 5px;
-	display: inline-block;
-	vertical-align: top;
-	background-color: #777;
-}
-
-#info {
-	border: 1px solid #aaa;
-	background-color: #777;
-	width: auto;
-	border-radius: 5px;
-	overflow: hidden;
-	padding: 5px;
+	/*display: inline-block;*/
+	background-color: #000000;
+	display:flex;
 }

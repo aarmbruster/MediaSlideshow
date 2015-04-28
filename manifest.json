@@ -3,12 +3,14 @@
   "name": "MediaSlideshow",
   "short_name": "MediaSlideshow",
   "description": "",
-  "version": "0.0.3",
+  "version": "0.0.8",
   "minimum_chrome_version": "38",
   "sandbox":true,
   "kiosk_enabled":true,
+  "kiosk_only":false,
 
   "permissions":[
+    "background",
     {"mediaGalleries": ["read", "scan"]},
       "power"
   ],
@@ -25,14 +27,14 @@
   },
   
   "commands": {
-    "my-command": {
+    "set-gallery": {
       "suggested_key": {
         "default": "Ctrl+Shift+U",
         "mac": "Ctrl+Shift+U",
         "chromeos": "Ctrl+Shift+U",
         "windows": "Ctrl+Shift+U"
       },
-      "description": "Toggle feature foo"
+      "description": "Set A Slideshow Folder"
     }
   }
 }
