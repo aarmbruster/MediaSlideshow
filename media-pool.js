@@ -8,7 +8,7 @@ var entryDataArray = [];
 var gCurOptGrp = null;
 var imgFormats = ['png', 'bmp', 'jpeg', 'jpg', 'gif', 'png', 'svg', 'xbm', 'webp'];
 var audFormats = ['wav', 'mp3'];
-var vidFormats = ['3gp', '3gpp', 'avi', 'flv', 'mpeg', 'mpeg4', 'mp4', 'ogg', 'webm'];
+var vidFormats = ['mp4', 'ogg', 'webm'];
 var timeout = null;
 
 function errorPrintFactory(custom) {
@@ -35,7 +35,6 @@ function errorPrintFactory(custom) {
             msg = 'Unknown Error';
             break;
       };
-
       console.log(custom + ': ' + msg);
    };
 }
@@ -51,7 +50,7 @@ function GalleryData(_id) {
 function EntryData(id) {
    this._id = id;
    this.path = "";
-   this.timeout = 10000;
+   this.timeout = 12000;
    this.sizeBytes = 0;
    this.numFiles = 0;
    this.numDirs = 0;
@@ -59,7 +58,13 @@ function EntryData(id) {
 
 function addImageToContentDiv() {
    var content_div = document.getElementById('content');
-   var image = document.createElement('img');
+   if(image)
+   {
+     image.src = "";
+     image = null;
+   }
+   
+   image = document.createElement('img');
    content_div.appendChild(image);
    return image;
 }
@@ -72,9 +77,21 @@ function addAudioToContentDiv() {
    return audio;
 }
 
+var video = null;
+var image = null;
+
 function addVideoToContentDiv() {
+  
+  if(video)
+     {
+       video.pause();
+       video.src =""; // empty source
+       video.load();
+       video = null;
+     }
+  
    var content_div = document.getElementById('content');
-   var video = document.createElement('video');
+   video = document.createElement('video');
    video.setAttribute("autoPlay", "true");
    content_div.appendChild(video);
    return video;
@@ -184,7 +201,9 @@ function updateMedia()
       });
    }
    
-   timeout = setTimeout(function(){cycleForward();}, entryDataArray[entryIndex].timeout);
+   var wait = entryDataArray[entryIndex].timeout;
+   console.log("wait: " + wait);
+   timeout = setTimeout(function(){cycleForward();}, wait);
 }
 
 function cycleForward()
@@ -207,62 +226,49 @@ function scanGallery(entries)
 {
    // when the size of the entries array is 0, we've processed all the directory contents
    entryIndex = 0;
-
    entryData = [];
-   for(var galleryIndex = 0; galleryIndex < gGalleryData.length; galleryIndex++)
+   scanIndex = 0;
+   var type;
+   var eIndex;
+   var galleryIndex;
+   var entriesLength = 0;
+   //Add up all the entries that follow our media filetype requirements
+   for(galleryIndex = 0; galleryIndex < gGalleryData.length; galleryIndex++)
    {
-     for(var eIndex = 0; eIndex < entries.length; eIndex++)
+     for(eIndex = 0; eIndex < entries.length; eIndex++)
      {
-       var entryData = new EntryData(gGalleryData[galleryIndex].id);
-       entryData.path = entries[eIndex].fullPath;
-       entryData.width = entries[eIndex].width;
-       entryData.height = entries[eIndex].height;
-       
-       var type = getFileType(entryData.path);
-       
-       if (type == "image")
+       type = getFileType(entries[eIndex].fullPath);
+       if (type == "image" || type == "audio" || type == "video")
        {
-          entryData.timeout = 12000;
-       } else if (type == "audio") {
-          var fs = gGalleryArray[galleryIndex];
-         fs.root.getFile(entryData.path, {create: false}, function(fileEntry)
-        {
-           fileEntry.file(function(file) {
-               chrome.mediaGalleries.getMetadata(file, {"metadataType":"all"}, function(metadata) {
-                  entryData.timeout = metadata.duration * 1000;
-                  
-               });
-            });
-        });
-       } else if (type == "video") {
-         var fs = gGalleryArray[galleryIndex];
-         fs.root.getFile(entryData.path, {create: false}, function(fileEntry)
-        {
-           fileEntry.file(function(file) {
-               chrome.mediaGalleries.getMetadata(file, {"metadataType":"all"}, function(metadata) {
-                  entryData.timeout = metadata.duration * 1000;
-               });
-            });
-        });
+         entriesLength++;
        }
-       
-       entryDataArray[eIndex] = entryData;
      }
    }
    
-   entryDataArray.sort(function(a, b)
+   //asyncronously go through and add all the EntryDatas into the entryDataArray using the function addEntryData
+   for(galleryIndex = 0; galleryIndex < gGalleryData.length; galleryIndex++)
    {
-      if(a.path < b.path) return -1;
-      if(a.path > b.path ) return 1;
-      return 0;
-   });
-   updateMedia();
+     for(eIndex = 0; eIndex < entries.length; eIndex++)
+     {
+       type = getFileType(entries[eIndex].fullPath);
+       switch(type)
+       {
+          case "image":
+            getImageMedia(entries[eIndex], galleryIndex, entriesLength, addEntryData);
+            break;
+          case "audio":
+            getAudioMedia(entries[eIndex], galleryIndex, entriesLength, addEntryData);
+            break;
+          case "video":
+            getVideoMedia(entries[eIndex], galleryIndex, entriesLength, addEntryData);
+            break;
+       }
+     }
+   }
 }
 
-//
 function scanGalleries(fs) {
    var mData = chrome.mediaGalleries.getMediaFileSystemMetadata(fs);
-   //gCurOptGrp = addGallery(mData.name, mData.galleryId);
    
    gGalleryData[gGalleryIndex] = new GalleryData(mData.galleryId);
    gGalleryData[gGalleryIndex].path = mData.name;
@@ -271,8 +277,6 @@ function scanGalleries(fs) {
    gGalleryReader.readEntries(scanGallery, errorPrintFactory('readEntries'));
 
    chrome.mediaGalleries.addGalleryWatch(mData.galleryId, onGalleryWatchAdded);
-   
-   
 }
 
 function resetGalleries(results)
@@ -290,30 +294,82 @@ function resetGalleries(results)
   });
 }
 
-function getGalleriesInfo(results) {
-   //clearContentDiv();
-   if (results.length) {
-      var str = 'Gallery count: ' + results.length + ' ( ';
-      results.forEach(function(item, indx, arr) {
-         var mData = chrome.mediaGalleries.getMediaFileSystemMetadata(item);
-         if (mData) {
-            str += mData.name;
-            if (indx < arr.length-1)
-               str += ",";
-            str += " ";
-         }
-      });
-      str += ')';
-      //document.getElementById("status").innerText = str;
-      gGalleryArray = results; // store the list of gallery directories
+function addEntryData(entry, length)
+{
+  entryDataArray[entryDataArray.length] = entry;
+  if(length == entryDataArray.length)
+  {
+    entryDataArray.sort(function(a, b)
+    {
+      if(a.path < b.path) return -1;
+      if(a.path > b.path ) return 1;
+      return 0;
+    });
+    updateMedia();
+  }
+}
 
-      //document.getElementById("read-button").disabled = "";
+function getImageMedia(entry, galleryIndex, entryLength, callback)
+{
+  var entryData = new EntryData(gGalleryData[0].id);
+  entryData.path = entry.fullPath;
+  entryData.width = entry.width;
+  entryData.height = entry.height;
+  entryData.timeout = 12000;
+  callback(entryData, entryLength);
+}
+
+function getVideoMedia(entry, galleryIndex, entryLength, callback)
+{
+  var entryData = new EntryData(gGalleryData[galleryIndex].id);
+  entryData.path = entry.fullPath;
+  entryData.width = entry.width;
+  entryData.height = entry.height;
+  
+  var fs = gGalleryArray[galleryIndex];
+  fs.root.getFile(entry.fullPath, {create: false}, function(fileEntry)
+  {
+    fileEntry.file(function(file) 
+    {
+        chrome.mediaGalleries.getMetadata(file, {"metadataType":"all"}, function(metadata) 
+        {
+          entryData.timeout = metadata.duration * 1000;
+          callback(entryData, entryLength);
+       });
+    });
+  });
+}
+
+function getAudioMedia(entry, galleryIndex, entryLength, callback)
+{
+  var entryData = new EntryData(gGalleryData[galleryIndex].id);
+  entryData.path = entry.fullPath;
+  entryData.width = entry.width;
+  entryData.height = entry.height;
+  
+    var fs = gGalleryArray[galleryIndex];
+    fs.root.getFile(entry, {create: false}, function(fileEntry)
+    {
+      fileEntry.file(function(file)
+      {
+         chrome.mediaGalleries.getMetadata(file, {"metadataType":"all"}, function(metadata)
+         {
+            entryData.timeout = metadata.duration * 1000;
+            callback(entryData, entryLength);
+      });
+    });
+  });
+}
+
+function getGalleriesInfo(results) {
+   
+   if (results.length) 
+   {
+      gGalleryArray = results; // store the list of gallery directories
    }
-   else {
-      //document.getElementById("status").innerText = 'No galleries found';
+   else 
+   {
       console.log("No galleries found");
-      //document.getElementById("read-button").disabled = "disabled";
-      clearList();
    }
 
    gGalleryIndex = 0;
@@ -351,6 +407,17 @@ window.addEventListener("load", function() {
     chrome.mediaGalleries.getMediaFileSystems({
          interactive : 'if_needed'
       }, getGalleriesInfo);
+   
+   
+   document.getElementById("left-arrow").addEventListener("click", function(e)
+   {
+     cycleBackward();
+   });
+   
+   document.getElementById("right-arrow").addEventListener("click", function(e)
+   {
+     cycleForward();
+   });
    
    document.getElementById('content').addEventListener("click", function(e)
    {

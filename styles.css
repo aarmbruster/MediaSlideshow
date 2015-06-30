@@ -5,12 +5,6 @@ body {
    margin: 0px;
    padding: 0px;
    font-family: "Open Sans", Arial, sans-serif;
-   align-self: center;
-   -webkit-align-self: center;
-   align-items: center;
-   align-content:center;
-   -webkit-align-items: center;
-   display:flex;
 }
 
 h1 {
@@ -19,16 +13,39 @@ h1 {
 }
 
 #content {
-	height: 100%;
-	width: 100%;
-	align-self: center;
-	align-items: center;
-  align-content: center;
-  -webkit-align-items: center;
-  -webkit-align-self: center;
 	border: 0px solid #000000;
 	border-radius: 0px;
 	/*display: inline-block;*/
 	background-color: #000000;
-	display:flex;
+	position:fixed;
+	vertical-align:center;
+	
+}
+
+#left-arrow {
+  width: 26px;
+  height: 109px;
+  background-image: url(assets/left_arrow.png);
+  position:fixed;
+  left:0;
+  top: 486px;
+}
+
+#right-arrow {
+  width: 26px;
+  height: 109px;
+  background-image: url(assets/right_arrow.png);
+  position:fixed;
+  right:0;
+  top: 486px;
+}
+
+#right-arrow:active{
+  opacity:0.4;
+  top: 488px;
+}
+
+#left-arrow:active{
+  opacity:0.4;
+  top: 488px;
 }

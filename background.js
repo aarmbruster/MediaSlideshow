@@ -9,11 +9,6 @@ chrome.app.runtime.onLaunched.addListener(function(launchData) {
   chrome.power.requestKeepAwake('display');
   
   
-  chrome.commands.onCommand.addListener(function(command) 
-  {
-    console.log('Command:', command);
-  });
-  
   chrome.app.window.create(
     'index.html',
     {
