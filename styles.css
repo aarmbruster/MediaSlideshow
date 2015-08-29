@@ -25,10 +25,11 @@ h1 {
 #left-arrow {
   width: 26px;
   height: 109px;
+  margin-bottom:50px;
   background-image: url(assets/left_arrow.png);
   position:fixed;
   left:0;
-  top: 486px;
+  top: 50%;
 }
 
 #right-arrow {
