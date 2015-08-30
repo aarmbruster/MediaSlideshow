@@ -65,6 +65,8 @@ function addImageToContentDiv() {
    }
    
    image = document.createElement('img');
+   content_div.setAttribute("width", image.width);
+   content_div.setAttribute("height", image.height);
    content_div.appendChild(image);
    return image;
 }
@@ -73,6 +75,7 @@ function addAudioToContentDiv() {
    var content_div = document.getElementById('content');
    var audio = document.createElement('audio');
    audio.setAttribute("controls","controls");
+   
    content_div.appendChild(audio);
    return audio;
 }
@@ -131,7 +134,6 @@ function addItem(itemEntry) {
    var opt = document.createElement("option");
    if (itemEntry.isFile) {
       opt.setAttribute("data-fullpath", itemEntry.fullPath);
-
       var mData = chrome.mediaGalleries.getMediaFileSystemMetadata(itemEntry.filesystem);
       opt.setAttribute("data-fsid", mData.galleryId);
    }
@@ -165,7 +167,6 @@ function updateMedia()
      
       fs.root.getFile(path, {create: false}, function(fileEntry) 
       {
-        console.log(path);
          var newElem = null;
          // show the file data
          clearContentDiv();
@@ -202,7 +203,6 @@ function updateMedia()
    }
    
    var wait = entryDataArray[entryIndex].timeout;
-   console.log("wait: " + wait);
    timeout = setTimeout(function(){cycleForward();}, wait);
 }
 

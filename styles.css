@@ -1,10 +1,8 @@
 body {
-   background: #000000;
-   color: #000;
-   border: 0px;
-   margin: 0px;
-   padding: 0px;
-   font-family: "Open Sans", Arial, sans-serif;
+  height:100%;
+  width:100%;
+  background-color:black;
+  margin:auto;
 }
 
 h1 {
@@ -13,40 +11,48 @@ h1 {
 }
 
 #content {
-	border: 0px solid #000000;
-	border-radius: 0px;
-	/*display: inline-block;*/
-	background-color: #000000;
-	position:fixed;
-	vertical-align:center;
-	
+
 }
 
 #left-arrow {
   width: 26px;
   height: 109px;
-  margin-bottom:50px;
+  top:50%;
   background-image: url(assets/left_arrow.png);
   position:fixed;
   left:0;
-  top: 50%;
+  transform: translate(0%, -50%);    
 }
 
 #right-arrow {
   width: 26px;
   height: 109px;
+  top:50%;
   background-image: url(assets/right_arrow.png);
   position:fixed;
   right:0;
-  top: 486px;
+  transform: translate(0%, -50%);   
 }
 
 #right-arrow:active{
   opacity:0.4;
-  top: 488px;
+  top:51%;
 }
 
 #left-arrow:active{
   opacity:0.4;
-  top: 488px;
+  top:51%;
+}
+
+img{
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%); 
+  display: block;
+  margin: auto;
+  height: auto;
+  max-height: 100%;
+  width: auto;
+  max-width: 100%;
 }
